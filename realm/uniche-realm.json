@@ -1702,8 +1702,8 @@
     "xContentTypeOptions": "nosniff",
     "referrerPolicy": "no-referrer",
     "xRobotsTag": "none",
-    "xFrameOptions": "SAMEORIGIN",
-    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "xFrameOptions": "",
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self' http://uniche-portal.localhost:5173 http://uniche-portal.localhost:8082 http://localhost:5173 http://localhost:8082; object-src 'none';",
     "xXSSProtection": "1; mode=block",
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
