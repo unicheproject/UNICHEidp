@@ -11,3 +11,4 @@
 
 # Scratch realm exports
 /tmp-export/
+docker-compose.override.yml
