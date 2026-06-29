@@ -44,6 +44,12 @@ KC_ADMIN_PASSWORD=<strong secret — NOT 'admin'>
 KC_DB_USERNAME=keycloak
 KC_DB_PASSWORD=<strong secret>
 
+# Seed credentials — resolved into the realm file's ${...} placeholders at FIRST import.
+# Set these BEFORE the first `docker compose up` (after import they live in the DB; see §5).
+SEED_ADMIN_PASSWORD=<strong secret>
+SEED_CURATOR_PASSWORD=<strong secret>
+CATALOGUE_CLIENT_SECRET=<strong secret>
+
 # Bind published ports to loopback so ONLY nginx (same VM) can reach them.
 # The value is interpolated into the host side of the port mapping, so "127.0.0.1:8081"
 # becomes "127.0.0.1:8081:8080".
@@ -135,10 +141,13 @@ redeploying does NOT apply the change.** To change realm config on a running sta
 of these (in order of preference):
 
 1. **Admin Console / `kcadm` / Admin REST** against the live realm — non-destructive, users
-   untouched. Then re-export to keep the file in sync and commit it:
+   untouched. Then re-export to keep the file in sync and commit it — on an environment with real
+   users, **use `--config-only`** so no live users or resolved secrets are written:
    ```bash
-   ./scripts/export-realm.sh    # writes realm/uniche-realm.json from the running realm
+   ./scripts/export-realm.sh --config-only   # config only: skips live users, scrubs secrets
    ```
+   (Plain `./scripts/export-realm.sh` also keeps the user *list*; both modes always restore the
+   `${...}` credential/secret placeholders, so an export never leaks a hash or a real secret.)
 2. **Partial import** for purely additive changes (a new client or scope) via the admin REST
    `partialImport` endpoint.
 3. *(Last resort — destructive)* delete the realm and re-import: this recreates only the objects and
@@ -155,18 +164,18 @@ is where your users actually live.
 The realm ships with dev conveniences. Apply these via the admin console / `kcadm` (see §5 — do NOT
 re-import destructively):
 
-- **Seeded users** `admin@uniche.test` and `curator@uniche.test` have dev passwords. Change them, or
-  replace them with real accounts. Note the **platform admin is whoever's `sub` equals the
-  Catalogue's `ADMIN_SEED_SUBJECT`** — either keep the seeded admin user, or set `ADMIN_SEED_SUBJECT`
-  (in the Catalogue) to your real admin's `sub`.
+- **Seeded-user passwords and the catalogue client secret** are NOT in the realm file — they are
+  `${SEED_ADMIN_PASSWORD}` / `${SEED_CURATOR_PASSWORD}` / `${CATALOGUE_CLIENT_SECRET}` placeholders
+  resolved from env at first import. Set strong values in `.env` (or the secret store) **before the
+  first `docker compose up`**. To change them *after* import, update the live realm via the admin
+  console (the placeholders are only read at import time — see §5). The **platform admin is whoever's
+  `sub` equals the Catalogue's `ADMIN_SEED_SUBJECT`** — keep the seeded admin user, or point
+  `ADMIN_SEED_SUBJECT` at your real admin's `sub`.
 - **`portal-web` client** lists only `localhost`/`*.localhost` redirect URIs and web origins. Add the
   staging Portal URL:
   - Valid redirect URIs: `https://uniche-staging.example.org/*`
   - Web origins: `https://uniche-staging.example.org`
 - **Realm CSP `frame-ancestors`** (Realm Settings → Security Defenses) lists the dev Portal origins
   for the silent-SSO iframe. Add `https://uniche-staging.example.org`.
-- **`catalogue` client secret** (`catalogue-dev-secret`) — rotate it. It is currently unused at
-  runtime (the Catalogue is a pure resource server, validating JWTs via JWKS), but rotate it before
-  any service starts using client-credentials.
 - **`dev-cli` client** is a public client with direct-access (password) grants for local testing.
   Disable it on staging unless you need scripted token fetches.
