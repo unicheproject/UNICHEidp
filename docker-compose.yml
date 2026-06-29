@@ -44,7 +44,7 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
       # ISSUER-CONSISTENCY [critical]: this is the `iss` the browser (Portal login) AND the backend
       # (Catalogue token validation) must BOTH use. Keep it fixed; do not enable hostname-dynamic.
-      KC_HOSTNAME: http://host.docker.internal:${IDP_HTTP_PORT:-8081}
+      KC_HOSTNAME: http://uniche-idp.localhost:${IDP_HTTP_PORT:-8081}
       KC_HTTP_ENABLED: "true"
       KC_HEALTH_ENABLED: "true"
     command: ["start", "--optimized", "--import-realm"]

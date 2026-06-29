@@ -15,22 +15,21 @@ below — they do **not** embed this image.
 ## Quick start
 
 ```bash
-# 1. One-time on the host: shared network + browser hostname (see "Issuer consistency" below)
+# 1. One-time on the host: the shared network
 docker network create uniche
-echo "127.0.0.1 host.docker.internal" | sudo tee -a /etc/hosts   # if not already present
 
 # 2. Configure and run
 cp .env.example .env
 docker compose up -d --build
 
 # 3. Get a dev token and inspect it
-TOKEN=$(curl -s http://host.docker.internal:8081/realms/uniche/protocol/openid-connect/token \
+TOKEN=$(curl -s http://uniche-idp.localhost:8081/realms/uniche/protocol/openid-connect/token \
   -d grant_type=password -d client_id=dev-cli \
   -d username=admin@uniche.test -d password=admin | jq -r .access_token)
 echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq    # aud:uniche-platform, fixed sub, no role claims
 ```
 
-Admin console: `http://host.docker.internal:8081` (user/pass from `.env`, default `admin`/`admin`).
+Admin console: `http://uniche-idp.localhost:8081` (user/pass from `.env`, default `admin`/`admin`).
 
 ---
 
@@ -38,7 +37,7 @@ Admin console: `http://host.docker.internal:8081` (user/pass from `.env`, defaul
 
 | Output | Value (local dev) | Consumed by |
 | :-- | :-- | :-- |
-| Issuer URL | `http://host.docker.internal:${IDP_HTTP_PORT}/realms/uniche` (default port `8081`) | Catalogue (`issuer-uri`), Portal (`IDP_URL`) |
+| Issuer URL | `http://uniche-idp.localhost:${IDP_HTTP_PORT}/realms/uniche` (default port `8081`) | Catalogue (`issuer-uri`), Portal (`IDP_URL`) |
 | Realm | `uniche` | both |
 | Shared audience | `uniche-platform` | Catalogue validates it; Portal token scope |
 | Client `portal-web` | public, Authorization Code + PKCE | Portal |
@@ -56,14 +55,16 @@ by the Catalogue at request time.
 ## Issuer consistency (the #1 local-dev gotcha)
 
 The `iss` claim must be **identical** for the browser (Portal login) and the backend (Catalogue
-validation). We pin it to `http://host.docker.internal:${IDP_HTTP_PORT}`:
+validation). We pin it to `http://uniche-idp.localhost:${IDP_HTTP_PORT}`:
 
-- Keycloak runs with `KC_HOSTNAME=http://host.docker.internal:8081` (fixed frontend URL).
-- Backend containers reach the same URL via `extra_hosts: ["host.docker.internal:host-gateway"]`.
-- The **browser** must resolve `host.docker.internal` too → add `127.0.0.1 host.docker.internal` to
-  your hosts file (`/etc/hosts` on Linux/WSL, `C:\Windows\System32\drivers\etc\hosts` on Windows).
+- Keycloak runs with `KC_HOSTNAME=http://uniche-idp.localhost:8081` (fixed frontend URL).
+- Backend containers reach the same URL via `extra_hosts: ["uniche-idp.localhost:host-gateway"]`
+  (it resolves to the host gateway, i.e. the published Keycloak port).
+- The **browser** needs no hosts-file edit: per RFC 6761, browsers resolve any `*.localhost` name to
+  loopback automatically. This is why `*.localhost` is used instead of `host.docker.internal`, which
+  a Windows/WSL browser cannot resolve.
 
-Always open the app and the admin console via `host.docker.internal:8081`, **not** `localhost:8081`,
+Always open the app and the admin console via `uniche-idp.localhost:8081`, **not** `localhost:8081`,
 so the issuer matches.
 
 ---

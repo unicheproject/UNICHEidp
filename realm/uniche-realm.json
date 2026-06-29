@@ -817,16 +817,16 @@
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://host.docker.internal:8082/*",
+        "http://localhost:5173/*",
         "http://localhost:8082/*",
-        "http://host.docker.internal:5173/*",
-        "http://localhost:5173/*"
+        "http://uniche-portal.localhost:5173/*",
+        "http://uniche-portal.localhost:8082/*"
       ],
       "webOrigins": [
-        "http://host.docker.internal:5173",
+        "http://localhost:5173",
         "http://localhost:8082",
-        "http://host.docker.internal:8082",
-        "http://localhost:5173"
+        "http://uniche-portal.localhost:5173",
+        "http://uniche-portal.localhost:8082"
       ],
       "notBefore": 0,
       "bearerOnly": false,
