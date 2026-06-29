@@ -488,7 +488,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "admin",
+          "value": "${SEED_ADMIN_PASSWORD}",
           "temporary": false
         }
       ],
@@ -506,7 +506,7 @@
       "credentials": [
         {
           "type": "password",
-          "value": "curator",
+          "value": "${SEED_CURATOR_PASSWORD}",
           "temporary": false
         }
       ],
@@ -732,7 +732,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "catalogue-dev-secret",
+      "secret": "${CATALOGUE_CLIENT_SECRET}",
       "redirectUris": [],
       "webOrigins": [],
       "notBefore": 0,
