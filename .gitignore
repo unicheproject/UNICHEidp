@@ -1,0 +1,13 @@
+# Secrets / local config — never commit
+.env
+.env.*
+!.env.example
+
+# Editor / OS noise
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Scratch realm exports
+/tmp-export/

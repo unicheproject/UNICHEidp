@@ -1,0 +1,26 @@
+{
+  "_comment": "Template for an authoring-tool client (public, Authorization Code + PKCE). Used by scripts/add-tool-client.sh when each tool repo is created. Replace TOOL_SLUG and TOOL_HOST. Every client must keep `uniche-platform-audience` as a default client scope so its tokens carry aud:uniche-platform. Do NOT add role/membership/admin protocol mappers — authorization lives in the Catalogue.",
+  "clientId": "TOOL_SLUG",
+  "enabled": true,
+  "publicClient": true,
+  "standardFlowEnabled": true,
+  "directAccessGrantsEnabled": false,
+  "serviceAccountsEnabled": false,
+  "attributes": {
+    "pkce.code.challenge.method": "S256",
+    "post.logout.redirect.uris": "+"
+  },
+  "redirectUris": [
+    "http://localhost:PORT/*",
+    "https://TOOL_HOST/*"
+  ],
+  "webOrigins": [
+    "http://localhost:PORT",
+    "https://TOOL_HOST"
+  ],
+  "defaultClientScopes": [
+    "uniche-platform-audience",
+    "profile",
+    "email"
+  ]
+}
