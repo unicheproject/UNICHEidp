@@ -1,6 +1,7 @@
 {
   "id": "uniche",
   "realm": "uniche",
+  "displayName": "UNICHE",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": true,
@@ -65,7 +66,7 @@
           }
         },
         "clientRole": false,
-        "containerId": "d7aa9671-ac75-485e-858a-8cfea62b320b",
+        "containerId": "uniche",
         "attributes": {}
       },
       {
@@ -74,7 +75,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "d7aa9671-ac75-485e-858a-8cfea62b320b",
+        "containerId": "uniche",
         "attributes": {}
       },
       {
@@ -83,7 +84,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "d7aa9671-ac75-485e-858a-8cfea62b320b",
+        "containerId": "uniche",
         "attributes": {}
       }
     ],
@@ -209,8 +210,8 @@
                 "impersonation",
                 "query-realms",
                 "view-realm",
-                "view-authorization",
                 "manage-authorization",
+                "view-authorization",
                 "query-groups",
                 "view-events",
                 "manage-users",
@@ -300,6 +301,7 @@
           "attributes": {}
         }
       ],
+      "media-editor-web": [],
       "dev-cli": [],
       "security-admin-console": [],
       "portal-web": [],
@@ -414,7 +416,7 @@
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
-    "containerId": "d7aa9671-ac75-485e-858a-8cfea62b320b"
+    "containerId": "uniche"
   },
   "requiredCredentials": [
     "password"
@@ -460,61 +462,6 @@
   "webAuthnPolicyPasswordlessAvoidSameAuthenticatorRegister": false,
   "webAuthnPolicyPasswordlessAcceptableAaguids": [],
   "webAuthnPolicyPasswordlessExtraOrigins": [],
-  "users": [
-    {
-      "id": "c763d848-f404-4d14-aa29-3aa3f2ceb82e",
-      "username": "service-account-catalogue",
-      "emailVerified": false,
-      "createdTimestamp": 1782721654860,
-      "enabled": true,
-      "totp": false,
-      "serviceAccountClientId": "catalogue",
-      "disableableCredentialTypes": [],
-      "requiredActions": [],
-      "realmRoles": [
-        "default-roles-uniche"
-      ],
-      "notBefore": 0,
-      "groups": []
-    },
-    {
-      "id": "a0000000-0000-4000-a000-000000000001",
-      "username": "admin@uniche.test",
-      "email": "admin@uniche.test",
-      "emailVerified": true,
-      "enabled": true,
-      "firstName": "Platform",
-      "lastName": "Admin",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "${SEED_ADMIN_PASSWORD}",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "default-roles-uniche"
-      ]
-    },
-    {
-      "username": "curator@uniche.test",
-      "email": "curator@uniche.test",
-      "emailVerified": true,
-      "enabled": true,
-      "firstName": "Demo",
-      "lastName": "Curator",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "${SEED_CURATOR_PASSWORD}",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "default-roles-uniche"
-      ]
-    }
-  ],
   "scopeMappings": [
     {
       "clientScope": "offline_access",
@@ -662,7 +609,8 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
-        "client.use.lightweight.access.token.enabled": "true"
+        "client.use.lightweight.access.token.enabled": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -704,7 +652,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -746,7 +695,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "false"
+        "realm_client": "false",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -788,7 +738,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "false"
+        "realm_client": "false",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -810,23 +761,24 @@
       ]
     },
     {
-      "id": "29772674-555b-4920-b18b-dea78d468408",
-      "clientId": "portal-web",
+      "id": "bf3a52d2-f69a-4551-8ea0-82230018f086",
+      "clientId": "media-editor-web",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "http://localhost:5173/*",
-        "http://localhost:8082/*",
-        "http://uniche-portal.localhost:5173/*",
-        "http://uniche-portal.localhost:8082/*"
+        "https://media-editor.uniche-eccch.eu/*",
+        "http://localhost:5174/*"
       ],
       "webOrigins": [
-        "http://localhost:5173",
-        "http://localhost:8082",
-        "http://uniche-portal.localhost:5173",
-        "http://uniche-portal.localhost:8082"
+        "https://media-editor.uniche-eccch.eu",
+        "http://localhost:5174"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -840,8 +792,79 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
         "post.logout.redirect.uris": "+",
-        "pkce.code.challenge.method": "S256"
+        "display.on.consent.screen": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "pkce.code.challenge.method": "S256",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "uniche-platform-audience",
+        "roles",
+        "profile",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "organization",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "id": "29772674-555b-4920-b18b-dea78d468408",
+      "clientId": "portal-web",
+      "name": "",
+      "description": "",
+      "rootUrl": "",
+      "adminUrl": "",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": false,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "http://uniche-portal.localhost:5173/*",
+        "http://localhost:8082/*",
+        "https://platform.uniche-eccch.eu/*",
+        "http://localhost:5173/*",
+        "http://uniche-portal.localhost:8082/*"
+      ],
+      "webOrigins": [
+        "http://uniche-portal.localhost:5173",
+        "https://platform.uniche-eccch.eu",
+        "http://uniche-portal.localhost:8082",
+        "http://localhost:8082",
+        "http://localhost:5173"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "post.logout.redirect.uris": "+",
+        "display.on.consent.screen": "false",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "pkce.code.challenge.method": "S256",
+        "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
@@ -883,7 +906,8 @@
       "frontchannelLogout": false,
       "protocol": "openid-connect",
       "attributes": {
-        "realm_client": "true"
+        "realm_client": "true",
+        "post.logout.redirect.uris": "+"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": false,
@@ -1228,6 +1252,7 @@
           "config": {
             "introspection.token.claim": "true",
             "multivalued": "true",
+            "userinfo.token.claim": "true",
             "user.attribute": "foo",
             "id.token.claim": "true",
             "access.token.claim": "true",
@@ -1282,7 +1307,8 @@
           "config": {
             "id.token.claim": "true",
             "introspection.token.claim": "true",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ]
@@ -1376,7 +1402,8 @@
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true",
-            "included.custom.audience": "uniche-platform"
+            "included.custom.audience": "uniche-platform",
+            "userinfo.token.claim": "false"
           }
         }
       ]
@@ -1500,12 +1527,13 @@
           "protocolMapper": "oidc-organization-membership-mapper",
           "consentRequired": false,
           "config": {
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "organization",
-            "jsonType.label": "String",
-            "multivalued": "true"
+            "jsonType.label": "String"
           }
         }
       ]
@@ -1612,8 +1640,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "AUTH_TIME",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "auth_time",
             "jsonType.label": "long"
@@ -1639,8 +1668,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "client_id",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "client_id",
             "jsonType.label": "String"
@@ -1654,8 +1684,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientAddress",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientAddress",
             "jsonType.label": "String"
@@ -1669,8 +1700,9 @@
           "consentRequired": false,
           "config": {
             "user.session.note": "clientHost",
-            "id.token.claim": "true",
             "introspection.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "clientHost",
             "jsonType.label": "String"
@@ -1719,25 +1751,29 @@
     {
       "alias": "eccch-aai",
       "displayName": "ECCCH AAI",
+      "internalId": "cbaad4ac-5c89-40c0-8782-3c00761f659e",
       "providerId": "oidc",
       "enabled": false,
+      "updateProfileFirstLoginMode": "on",
       "trustEmail": true,
       "storeToken": false,
       "addReadTokenRoleOnCreate": false,
+      "authenticateByDefault": false,
       "linkOnly": false,
+      "hideOnLogin": false,
       "firstBrokerLoginFlowAlias": "first broker login",
       "config": {
-        "clientId": "uniche-platform",
-        "clientSecret": "CHANGE_ME_DEPLOY",
-        "authorizationUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/auth",
-        "tokenUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/token",
         "userInfoUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/userinfo",
-        "jwksUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/certs",
-        "issuer": "https://aai.eccch.example/realms/eccch",
-        "useJwksUrl": "true",
         "validateSignature": "true",
+        "clientId": "uniche-platform",
+        "tokenUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/token",
+        "jwksUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/certs",
+        "authorizationUrl": "https://aai.eccch.example/realms/eccch/protocol/openid-connect/auth",
         "syncMode": "IMPORT",
-        "defaultScope": "openid email profile"
+        "clientSecret": "CHANGE_ME_DEPLOY",
+        "issuer": "https://aai.eccch.example/realms/eccch",
+        "defaultScope": "openid email profile",
+        "useJwksUrl": "true"
       }
     }
   ],
@@ -1752,12 +1788,12 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-property-mapper",
+            "oidc-address-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-property-mapper",
             "oidc-usermodel-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
+            "saml-user-property-mapper",
             "saml-role-list-mapper",
-            "oidc-address-mapper",
             "saml-user-attribute-mapper",
             "oidc-full-name-mapper"
           ]
@@ -1831,13 +1867,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "oidc-address-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-attribute-mapper",
-            "saml-role-list-mapper",
+            "oidc-full-name-mapper",
             "saml-user-property-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-attribute-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-full-name-mapper"
+            "saml-role-list-mapper",
+            "oidc-usermodel-property-mapper"
           ]
         }
       },
@@ -1857,6 +1893,12 @@
         "providerId": "hmac-generated",
         "subComponents": {},
         "config": {
+          "kid": [
+            "468e3cd7-c938-40b4-a29b-aa6e3e0248de"
+          ],
+          "secret": [
+            "fmPwcIZt6Lrs8BxgZ_TiwMNPvLCH4FeWFNcjheFs4h43e2q0doCwbMn6fQjOH6Fs-NM_aZwiCa571jyVMnOfaNpUuZxpg2GSkyB0nejNnrXobNQEjVhKqIKrEWLtcRGxmUE_DB0qjjYGqmAezzkaFZsZscxwe2GOFL1VcsaFZ88"
+          ],
           "priority": [
             "100"
           ],
@@ -1871,6 +1913,12 @@
         "providerId": "aes-generated",
         "subComponents": {},
         "config": {
+          "kid": [
+            "20c8bc4a-af40-45e8-8de6-e1d94f8edaec"
+          ],
+          "secret": [
+            "YFgZhfB5OilHyXV11EPbjg"
+          ],
           "priority": [
             "100"
           ]
@@ -1882,6 +1930,12 @@
         "providerId": "rsa-generated",
         "subComponents": {},
         "config": {
+          "privateKey": [
+            "MIIEogIBAAKCAQEAqwkocEH+F8ZzgcF4LxsNFdGNLD0KDwQw9Imh52vUxzv2CBBgAZk2gvTfAbityjEuHneMpGbxuR4QarxqxQi47M0KjvwH9DNnQXZf5xf2Bs3aY0MrmglE6BcbGJ3hGq67n7njSC5Ci2MmNDanc0ohlT0s8m58o/7ehKckGdZ8FYwcKBNznI6POrsIMldF4B16TaVaTbxonutvMueAf5NOGGNj1l4yl+hBxtIEB+XEjZTxLekIawiWn8MjNtcycJI6n/W++dVp75EBSvcp8SrVxKjZRYDri5OIIGOkESt2e/+2Cyy/NrpLRoV5WtfYsKiv+cJKB5Qwzc0HJVVJIIHeCQIDAQABAoIBAA76N1NVRBX65+SF96tQWB4AArfMBJR6DntrjgUA+VoVEx9zp6ScMRzYqqqw7G8XTW2XlHZVGXfXfSKLq2HjuKXr8q/AvEWTNsiRwCYxf/bqkeQ9XpUXmLQmSdYnBS5b/Mwo8BFDE8q2/QJ3gsRiynwSJlx4dmu6Buxg4pVspeMRBDVzQRJebq14J6YDwbMkwXeMtgHM2qaaaA9OuvIX635PaVTkBkXkTH6DCu6xOmKfMd4pGYRyPQShvJ3ZfiQANDPKk6ZblT7TZVOi/IUJGpzxGGfhcvwPxkIobW2J7yYkde/r+2HL5Wo1m7XK3eb7JX7tsxEgjPrwLfa3K649xl0CgYEA3V3D7n3r3r/0fe54ym/FD/D2stvFHKDMafdlNKlKAWT/edRIujstvp37nYGH/HbSZpdnANn/b2cW5dqFg8xxWM1vCGGedmd1OXu1eRCV+pHLUzmNoUu6zMhm9dFXwaSRKNBWSJ6CEh+Rjo8AF5sl0L9soOhQ2d/KJkwczyBpKL8CgYEAxcuJ+gHL/lLFPcGkmE3YAlMg3jMqWhFu+KqAMDuvJ+8rAu4VgelwOW62fJKU3i0VCugYgOsE5RMrUG0hjTVajM0u6Cftoo01sL8M3oJjW6o/MpaBoyDmaXK4frMev9sm0ehc5Trjo4kK8CGYsYXfz9XIE/a7di1vdNCa/vSoIzcCgYAjlLy3itns1eHQlBIqR8jfBRZCLX0DWv1AUxmbW1Kf4sIFrQ97j6OMrgwRhw56kAbForRVuLSMDX/qtjMbujLF2U9tg3NbCMoY0T+cFARnYCPUXr3bHTcLT3LtNBbs8yy56LLVvVSe4SAeT/Ht2Ww8n2gwfObx/jyZ50YCLO16NQKBgG+zock5yI1pCxD0UdLda1bswUwbExjobYYrK9eRbTqdO+ocsLK8NW+J0a8KTN4oEZEmP+hWUV5Y9AYoi2Emt2t62LmtCuvY2XBmhIsIkboLrEMSckXA5763Ve/fkkcBKawzkHq4RiRt2WqBXq0qkJnb/nEfzwBPanlK8a14V5gDAoGAeTjUsD+zuvohZQ0BKnesxS9sclPSezLetvEQPuFsQ9tsFFoHvxvQO8zbEU489Nh8q8+GEDbyuENAvE0eIxuCK/OOX5W3U/H2RDdXGKjKpv3btoT3u6AQL4INM7tWOqxE3JQY1M3gaQAF+HViEgaT9uFCNrOtYXkbV7BWeHfhK9M="
+          ],
+          "certificate": [
+            "MIICmzCCAYMCBgGfE92fPzANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZ1bmljaGUwHhcNMjYwNjI5MTQ1MDE5WhcNMzYwNjI5MTQ1MTU5WjARMQ8wDQYDVQQDDAZ1bmljaGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCrCShwQf4XxnOBwXgvGw0V0Y0sPQoPBDD0iaHna9THO/YIEGABmTaC9N8BuK3KMS4ed4ykZvG5HhBqvGrFCLjszQqO/Af0M2dBdl/nF/YGzdpjQyuaCUToFxsYneEarrufueNILkKLYyY0NqdzSiGVPSzybnyj/t6EpyQZ1nwVjBwoE3Ocjo86uwgyV0XgHXpNpVpNvGie628y54B/k04YY2PWXjKX6EHG0gQH5cSNlPEt6QhrCJafwyM21zJwkjqf9b751WnvkQFK9ynxKtXEqNlFgOuLk4ggY6QRK3Z7/7YLLL82uktGhXla19iwqK/5wkoHlDDNzQclVUkggd4JAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAEXuSSHGhyrLmOx3NaPVXRr6xnmSCOB/1KVwX/unJOfkr+0nAMIHlp1LXnmR05121vw+VSE+B2PQ/s34kP1i4SmfWVgV5lb1Q+W0OD3LL5y+59h5GQVCNRT0SA8PQth/5dvuZY/H8roP0PktRYDkV1xLkZGAAf3pd5HeYTYp25K/7zl2wt52Qvkpb/Bb+w4D+/kS7UuB5Z296zelemLJgqEdLOxmruFzcPORz6zV/VEierUP+AWDruYDdcvx9KPeM3AjhxRC3PZoXCHTOWMmejdC3QovlJavgkzoKACdN/7tb2ffQ/dzjh3/dZ/ZNZ3G5okWWxuW6fWfWVk9O2hVuDY="
+          ],
           "priority": [
             "100"
           ]
@@ -1893,6 +1947,12 @@
         "providerId": "rsa-enc-generated",
         "subComponents": {},
         "config": {
+          "privateKey": [
+            "MIIEowIBAAKCAQEAsGLbBFGShp5ZZP7YFOKA8qfPSB+W1RJjOLonQDkPvclud7O1WyxJvAZgP9Maj0ykrJhFZ1Gu0elE9w54QRc+xSuxiKtupR+N9599ityHSgFPL9gOXRDv08ttanxNVBnNbu8xT22TPq8SuTZzAMNZXjOiDUDkAumovvZFBZDfYHJP/eAgRlHqE7ateX08Km6PU8LTqV/K0386qXqf60BV8RJVWxzsmaB4GjLxe8PFv48E8NRnQVq6I2M9Ed3eKrj1FOG1Ao8OzVo8j/zp8zn1dbaIEXgtqAo+KDTpNFMbifhT6DB8J1IGjfQ/6G7pnmaZ3z3CoW29mPfu7qudCh0/pQIDAQABAoIBAB4DXDAibzPP2vc38+2t0vI3QqqLkX9FBzQeXNJtQzPwhAcDQa83XH6NeTAzDBhpGrYxnNGlUQFv12fQgv7UZT5onmdagFPBiEcj0Nlhh/W8PkyuT1dfq+dWfJI7f275iv6+3Z2d0AnBAYcZcD0ngFvqnj7yFTo3pxqDTiBR0+iVkoGC98YLibf3l8f5lFArOM0ecU5+w/MibMxR8pk5al9/YNuPql6AEGVAOQ5TsbySpksyVbvKOpbyU5b4gUdHsqMP52QxhPmfjFWINvHlydgVztYVcCWhFPudimnEty2RN6A5Ecaq5YbywAyvbmfJE4rEurdkBMG8gAoYeeCZyCECgYEA4GNmObWkK8jgSUvOwqCNg5afNYClRrQa+zSrT+J5Xs/+YV0TiWQ+PDk3coXkJOvA5xuGKrxZluO/HIF5Kkp+SXIAbwNo5fcUX5EcSq1vZmOHzj10FmnsqKpu9gZOngVQdad66wAbIqHT16z9qxElaWZ/CyTdiRb2YXJkhofYCjUCgYEAyTxAaTAJMjkJ+wBeVprAWE12HSf7GBpVIe20caCTvE4XCFg+cRT7afT2n0JY+aDvn+uJPIFVDuHR0kZ+eiUlMk4N+IzuR4bR2nISgdzZ+umOspOPJRKJ7MGQOx5V05w5GS8BWLtlHs86uhXUF9qA/VP5TV39wwoKa0cq1yuDjbECgYBY6QnodADJGJ9Ga7NRiyyHp3cOTBsxGMxYHVaEIMjWuLOjAK5tEjtWwZUm28a6mm+lI1LWPCuDjlp7gRHxn/LKR1HEqyU1eeGovGbpcC9j8qwtHEyTVQVhD6dH9NfR5WksNWCPHUujPVwjaXhaAEFCskpEsCbX2zFlC16pr8n6wQKBgEarQRdvhhs8CrQ56edSCzA3a75LdxN8097JYm/w61Dav53vl2YQ70XDgARnwWVQzjYD+jrkVGGYjh3hIbN1bf2fiap6m4dE4ldrbfJrA6Xo9XLi/QcQ3pzlUOhh+9QHbcnZRwjJLnbGYaJN3iDOXDQalFdGJcKjuQr5gCL2JgnRAoGBAN5K5o4qmh33ElVpchh2SAr0Xys0B3gpj8vp+9oiQ1fvMEF1UOK2FCdnsfpjnKURZwdqtHlnHOcCyJiJw5b1dfWwzmwR8eQ0bfS8Z660htl6/xLdt1HXB6NnBwuihBSjUrqE2Zb7moNHYnY0lsJWpl5+d0uHPfgaB92S3uu3RLJg"
+          ],
+          "certificate": [
+            "MIICmzCCAYMCBgGfE92hNTANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZ1bmljaGUwHhcNMjYwNjI5MTQ1MDE5WhcNMzYwNjI5MTQ1MTU5WjARMQ8wDQYDVQQDDAZ1bmljaGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCwYtsEUZKGnllk/tgU4oDyp89IH5bVEmM4uidAOQ+9yW53s7VbLEm8BmA/0xqPTKSsmEVnUa7R6UT3DnhBFz7FK7GIq26lH433n32K3IdKAU8v2A5dEO/Ty21qfE1UGc1u7zFPbZM+rxK5NnMAw1leM6INQOQC6ai+9kUFkN9gck/94CBGUeoTtq15fTwqbo9TwtOpX8rTfzqpep/rQFXxElVbHOyZoHgaMvF7w8W/jwTw1GdBWrojYz0R3d4quPUU4bUCjw7NWjyP/OnzOfV1togReC2oCj4oNOk0UxuJ+FPoMHwnUgaN9D/obumeZpnfPcKhbb2Y9+7uq50KHT+lAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAKhshf65H+vOfJ4jf05KIyKlmUuolpNktUb5Tr5xF560qROSqIG3ouIvzhhN8Olc26gC/RZJwIYlZ/0beA09D8vVZFaRIpD5cxGJgDD06iiQeRQvyMTjrTxlPyuNt3TVrFYlOP0Szr5cAJrr9RtmJf5xO6I06824xDWGYy+g1RYPNrimcRjEbl3N86D4LuoeBwM62m9XfXUn4WukAHTuQ/Kz3mUVhIsdmefFcpLP0MfO7mWX6VX+Xl3Z7371NuGxE99uviY7msjiFpqF8s40hr2ta3MuS5NZAnZ37uQBpN1lKOxhLbf8vQs5VVZX6+9cQUHpyjfXAOtdc0NTcvxXQaE="
+          ],
           "priority": [
             "100"
           ],
@@ -2640,8 +2700,12 @@
     "cibaExpiresIn": "120",
     "cibaAuthRequestedUserHint": "login_hint",
     "oauth2DeviceCodeLifespan": "600",
+    "clientOfflineSessionMaxLifespan": "0",
     "oauth2DevicePollingInterval": "5",
+    "clientSessionIdleTimeout": "0",
     "parRequestUriLifespan": "60",
+    "clientSessionMaxLifespan": "0",
+    "clientOfflineSessionIdleTimeout": "0",
     "cibaInterval": "5",
     "realmReusableOtpCode": "false"
   },
@@ -2656,5 +2720,59 @@
   "clientPolicies": {
     "policies": []
   },
-  "displayName": "UNICHE"
+  "users": [
+    {
+      "id": "c763d848-f404-4d14-aa29-3aa3f2ceb82e",
+      "username": "service-account-catalogue",
+      "emailVerified": false,
+      "createdTimestamp": 1782721654860,
+      "enabled": true,
+      "totp": false,
+      "serviceAccountClientId": "catalogue",
+      "disableableCredentialTypes": [],
+      "requiredActions": [],
+      "realmRoles": [
+        "default-roles-uniche"
+      ],
+      "notBefore": 0,
+      "groups": []
+    },
+    {
+      "id": "a0000000-0000-4000-a000-000000000001",
+      "username": "admin@uniche.test",
+      "email": "admin@uniche.test",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Platform",
+      "lastName": "Admin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SEED_ADMIN_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-uniche"
+      ]
+    },
+    {
+      "username": "curator@uniche.test",
+      "email": "curator@uniche.test",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Demo",
+      "lastName": "Curator",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "${SEED_CURATOR_PASSWORD}",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-uniche"
+      ]
+    }
+  ]
 }
