@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 # Capture the running realm back into realm/uniche-realm.json (config-as-code workflow).
 #
-#   ./scripts/export-realm.sh                # full: also captures the user LIST (dev use)
-#   ./scripts/export-realm.sh --config-only  # config only: no live users — SAFE on staging/prod
+#   ./scripts/export-realm.sh                # DEFAULT: config only — no live users. Safe everywhere.
+#   ./scripts/export-realm.sh --with-users   # also capture the live user LIST (dev use only)
+#   ./scripts/export-realm.sh --config-only  # explicit alias for the default
 #
 # The Keycloak admin UI is NOT the source of truth: change the realm in the console, run this, and
-# commit the diff. Either way the script NEVER writes live secrets or credential hashes to the file:
+# commit the diff. The script NEVER writes live secrets or key material to the file:
+#   * realm signing/encryption KEYS are dropped entirely — they are per-environment runtime state,
+#     owned by Keycloak and persisted in its DB volume; on import Keycloak regenerates them. Keys
+#     must never live in git (a leaked realm private key lets anyone forge tokens);
 #   * client secrets and IdP broker secrets are restored to the committed ${...} placeholders;
 #   * seed-user passwords are kept as their ${...} placeholders (never the resolved hashes);
-#   * --config-only additionally skips the live user list entirely (use it anywhere with real users).
+#   * --with-users additionally keeps the live user list (dev only; still no credential hashes).
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -17,11 +21,13 @@ REALM=uniche
 ADMIN_SUB="a0000000-0000-4000-a000-000000000001"
 COMMITTED="realm/uniche-realm.json"
 
-MODE=full
+# Config-only is the DEFAULT so an export is safe to run on any environment, including one with real
+# users. Pass --with-users only on a throwaway dev instance where capturing the user list is useful.
+MODE=config-only
 case "${1:-}" in
-  "")            MODE=full ;;
-  --config-only) MODE=config-only ;;
-  *) echo "usage: $0 [--config-only]" >&2; exit 2 ;;
+  ""|--config-only)     MODE=config-only ;;
+  --with-users|--full)  MODE=full ;;
+  *) echo "usage: $0 [--config-only | --with-users]" >&2; exit 2 ;;
 esac
 
 USERS_FLAG=realm_file
@@ -49,11 +55,22 @@ docker compose cp keycloak:/tmp/realm-export/"$REALM"-realm.json "$TMP"
 # Merge the export into the committed file, scrubbing anything secret. The committed file supplies
 # the placeholders we restore, so the externalised credentials are never overwritten.
 python3 - "$TMP" "$COMMITTED" "$MODE" "$ADMIN_SUB" <<'PY'
-import json, sys
+import json, re, sys
 
 export_path, committed_path, mode, admin_sub = sys.argv[1:5]
 new = json.load(open(export_path))
 old = json.load(open(committed_path))
+
+# --- Realm KEYS: never commit signing/encryption private keys or HMAC/AES secrets ---
+# These are per-environment runtime state: Keycloak generates them on import and persists them in
+# its DB volume. Dropping the key providers here means the committed realm carries NO key material;
+# each environment (dev, staging) keeps its own keys, and none of them ever land in git.
+comps = new.get("components")
+if isinstance(comps, dict):
+    dropped = comps.pop("org.keycloak.keys.KeyProvider", None)
+    if dropped:
+        print(f"Dropped {len(dropped)} realm key provider(s) — keys stay in each env's DB, not git.",
+              file=sys.stderr)
 
 # --- Users: never let live user data / credential hashes reach the committed file ---
 old_users = old.get("users", [])
@@ -94,8 +111,38 @@ for u in new.get("users", []):
     if u.get("username") == "admin@uniche.test":
         u["id"] = admin_sub
 
+# --- Safety net: warn on any residual secret-shaped value that is not a placeholder/sentinel ---
+# Catches anything a future realm change introduces (LDAP bind creds, new key types, an IdP secret
+# that wasn't externalised) so it gets noticed in review instead of silently committed. Matches only
+# keys that actually carry secret VALUES — NOT config toggles like *Password* policy flags.
+def key_is_secret(k):
+    kl = k.lower()
+    return kl in {"secret", "clientsecret", "bindcredential", "secretdata"} \
+        or kl.endswith("secret") or kl.endswith("privatekey")
+PLACEHOLDER = re.compile(r"^\$\{[^}]+\}$")          # externalised: ${VAR}
+SENTINEL = re.compile(r"^(CHANGE_ME|REDACTED|TODO)", re.I)  # intentional non-secret placeholder text
+def is_safe(v):
+    if isinstance(v, str):
+        return bool(PLACEHOLDER.match(v) or SENTINEL.match(v))
+    if isinstance(v, list):
+        return all(isinstance(x, str) and is_safe(x) for x in v) if v else True
+    return False
+def scan(node, path=""):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            p = f"{path}.{k}"
+            if key_is_secret(k) and v not in (None, "", []) and not is_safe(v):
+                sample = str(v)[:24].replace("\n", " ")
+                print(f"WARNING: possible secret left in export at {p} = {sample}... "
+                      f"— review before committing", file=sys.stderr)
+            scan(v, p)
+    elif isinstance(node, list):
+        for idx, v in enumerate(node):
+            scan(v, f"{path}[{idx}]")
+scan(new)
+
 json.dump(new, open(committed_path, "w"), indent=2, ensure_ascii=False)
 print(f"Wrote {committed_path} (mode={mode}).")
 PY
 
-echo "Done. Review the diff and commit — no live secrets or credential hashes were written."
+echo "Done. Review the diff and commit — no live secrets, key material, or credential hashes were written."

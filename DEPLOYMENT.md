@@ -125,7 +125,7 @@ database volume.** There are two separate things:
 
 | In the realm JSON (`realm/uniche-realm.json`, baked into the image) | In the Keycloak **database** (`keycloak-db-data` volume) |
 | :-- | :-- |
-| Realm settings, clients, client scopes, protocol mappers, and the **seed** users defined in the file | Every user created at runtime, their credentials, role/group assignments, sessions, consents |
+| Realm settings, clients, client scopes, protocol mappers, and the **seed** users defined in the file (but **no keys** — see "Realm keys" below) | Every user created at runtime, their credentials, role/group assignments, sessions, consents, and the realm's **signing/encryption keys** |
 
 `--import-realm` runs on every start but **imports a realm only if it does not already exist**. Once
 `uniche` is in the database, each later start logs *"Realm 'uniche' already exists. Import skipped"*
@@ -141,13 +141,15 @@ redeploying does NOT apply the change.** To change realm config on a running sta
 of these (in order of preference):
 
 1. **Admin Console / `kcadm` / Admin REST** against the live realm — non-destructive, users
-   untouched. Then re-export to keep the file in sync and commit it — on an environment with real
-   users, **use `--config-only`** so no live users or resolved secrets are written:
+   untouched. Then re-export to keep the file in sync and commit it:
    ```bash
-   ./scripts/export-realm.sh --config-only   # config only: skips live users, scrubs secrets
+   ./scripts/export-realm.sh                # DEFAULT: config only — no live users. Safe here.
+   ./scripts/export-realm.sh --with-users   # also capture the live user LIST (dev only)
    ```
-   (Plain `./scripts/export-realm.sh` also keeps the user *list*; both modes always restore the
-   `${...}` credential/secret placeholders, so an export never leaks a hash or a real secret.)
+   The export **never writes secrets or key material**: client/IdP secrets and seed passwords are
+   restored to their `${...}` placeholders, and the realm's signing/encryption **keys are dropped
+   entirely** (they are per-environment — see "Realm keys" below). A residual-secret scan warns on
+   anything secret-shaped that slips through, so it is caught in review rather than committed.
 2. **Partial import** for purely additive changes (a new client or scope) via the admin REST
    `partialImport` endpoint.
 3. *(Last resort — destructive)* delete the realm and re-import: this recreates only the objects and
@@ -157,9 +159,50 @@ Recommended model: treat the JSON as your **bootstrap + reviewed source of truth
 changes through the admin API and re-export. **Back up the `keycloak-db` database regularly** — that
 is where your users actually live.
 
+### Realm keys live in the database, never in git
+
+The realm's token **signing/encryption keys** (RSA private keys, HMAC/AES secrets) are *not* in
+`realm/uniche-realm.json` — `export-realm.sh` strips them. They are per-environment runtime state:
+Keycloak **generates fresh keys on first import** and stores them in the `keycloak-db-data` volume,
+where they survive restarts and redeploys. So dev and staging each hold their own keys and none ever
+reach the repo. Consumers (Catalogue, Portal) fetch the public keys from JWKS at runtime, so a key
+change is transparent to them — no restart or config change on their side.
+
+**Consequence for `docker compose down -v`:** deleting the volume deletes the keys too, so the next
+`up` generates brand-new ones. On an environment with **no users worth keeping**, that is the
+simplest way to *rotate* a compromised key — nuke the volume and let Keycloak regenerate. On an
+environment with **real users**, `down -v` wipes them as well, so rotate in the Admin Console
+instead (Realm Settings → Keys: add new `rsa-generated`/`hmac-generated`/`aes-generated` providers at
+a higher priority, then delete the old ones).
+
 ---
 
-## 6. Harden the seeded realm for staging
+## 6. Local development: applying realm changes
+
+You do **not** need `docker compose down -v` after every config change. Pick the loop that fits:
+
+**A. Edit live, then capture (everyday loop).** Change the realm in the Admin Console, then export
+and commit — no restart, because you edited the running realm directly:
+```bash
+./scripts/export-realm.sh                     # config-only, key-free by default
+git add realm/uniche-realm.json && git commit
+```
+
+**B. Hand-edit the JSON, then re-apply.** A plain restart will **not** pick up an edited file (import
+is skipped once the realm exists — see §5). Force it:
+```bash
+docker compose down -v && docker compose up -d --build   # clean slate: fresh DB, fresh keys
+# or, without deleting the whole volume — re-imports the uniche realm only:
+./scripts/import-realm.sh
+```
+Both are destructive to the `uniche` realm's runtime users and regenerate its keys — fine in dev.
+
+**When to reach for `down -v && up --build`:** to prove the committed file imports cleanly *from
+scratch*, or to reset to a known-good state — not reflexively after every tweak.
+
+---
+
+## 7. Harden the seeded realm for staging
 
 The realm ships with dev conveniences. Apply these via the admin console / `kcadm` (see §5 — do NOT
 re-import destructively):
